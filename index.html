@@ -54,10 +54,7 @@
     // create an array with edges
     var edges = new vis.DataSet([
         {from: 'Q1+CONN', to: 'Q1+A1'},
-        {from: 'Q1+CONN', to: 'Q1+A1'},
-        {from: 1, to: 2},
-        {from: 2, to: 4},
-        {from: 2, to: 5}
+        {from: 'Q1+CONN', to: 'Q1+A2'},
     ]);
 
     // create a network
@@ -69,7 +66,21 @@
         edges: edges
     };
 	
-    var options = {};
+    var options = {
+		manipulation: {
+			addEdge: function(edgeData,callback) {
+				if (edgeData.from === edgeData.to) {
+					var r = confirm("Do you want to connect the node to itself?");
+					if (r === true) {
+						callback(edgeData);
+					}
+				}
+				else {
+					callback(edgeData);
+				}
+			}
+		}
+	}
 
     // initialize your network!
     var network = new vis.Network(container, data, options);
