@@ -1,0 +1,99 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        #mynetwork {
+            width: 1000px;
+            height: 600px;
+            border: 1px solid lightgray;
+        }
+		
+		#canvas-wrap { position:relative } /* Make this a positioned parent */
+		#counter     { 
+			position:absolute; 
+			top:20px;
+			left:30px;
+			color: white;
+			text-align: center;
+			font-size: 25px;
+			background: red;
+		}
+
+    </style>
+</head>
+<body>
+
+<div id="canvas-wrap">
+  <div id="mynetwork"></div>
+  <div id="counter"><div><form>
+  First name:<br>
+  <input type="text" name="firstname"><br>
+  Last name:<br>
+  <input type="text" name="lastname">
+</form></div></div>
+</div>
+
+
+
+<script type="text/javascript">
+    // create an array with nodes
+    var nodes = new vis.DataSet([
+        {id: 'Q1+CONN', shape:"circle"},
+        {id: 'Q1+A1', shape:"circle"},
+        {id: 'Q1+A2', shape:"circle"},
+        {id: 'Q1+DEF', shape:"circle"},
+        {id: 'Q2+CONN', shape:"circle"},
+        {id: 'Q2+A1', shape:"circle"},
+        {id: 'Q2+A2', shape:"circle"},
+        {id: 'Q2+DEF', shape:"circle"},
+    ]);
+
+    // create an array with edges
+    var edges = new vis.DataSet([
+        {from: 'Q1+CONN', to: 'Q1+A1'},
+        {from: 'Q1+CONN', to: 'Q1+A1'},
+        {from: 1, to: 2},
+        {from: 2, to: 4},
+        {from: 2, to: 5}
+    ]);
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+	
+    var options = {};
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+	
+	var count = 0;
+	
+	// Handle rendering event
+	network.on("afterDrawing", function (params) {
+		// Get node position and convert it to dom position
+		var nodeId = 'Q1+CONN';
+		var nodePosition = network.getPositions([nodeId]);
+		var divPosition = network.canvasToDOM({x:nodePosition[nodeId].x, y:nodePosition[nodeId].y});
+		
+		// Update position and text
+		$("#counter").css({top: divPosition.y, left: divPosition.x});
+		//$('#counter div').text(count);
+		//count++;
+    });
+	
+	// Handle scale event
+	network.on("zoom", function (params) {
+		$('#counter div').css({ zoom: params.scale });
+	});
+	
+</script>
+</body>
+</html>
